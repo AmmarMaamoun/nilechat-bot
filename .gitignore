@@ -1,0 +1,41 @@
+# Environment — NEVER commit real credentials
+.env
+.env.local
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# Node.js
+whatsapp-service/node_modules/
+
+# WhatsApp session data (per-company auth)
+.wwebjs_auth/
+.wwebjs_cache/
+
+# Logs
+*.log
+server.log
+server_err.log
+ngrok.log
+
+# Runtime files
+tunnel_url.txt
+ngrok.exe
+
+# Test / scratch files
+chat_test.txt
+stream_debug.txt
+nilechat_test_result.txt
+
+# OS
+.DS_Store
+Thumbs.db

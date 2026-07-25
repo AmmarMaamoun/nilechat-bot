@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NileChat — لوحة التحكم</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f0f2f5; color: #222; direction: rtl; }
+
+  /* ── Layout ── */
+  .sidebar {
+    position: fixed; right: 0; top: 0; bottom: 0; width: 220px;
+    background: #0a1628; color: #fff; display: flex; flex-direction: column;
+    padding: 24px 0;
+  }
+  .logo { padding: 0 20px 28px; font-size: 20px; font-weight: 800; color: #0a7cff; }
+  .logo span { color: #fff; }
+  .nav-item {
+    padding: 12px 20px; cursor: pointer; font-size: 14px;
+    display: flex; align-items: center; gap: 10px; transition: background .15s;
+    border-right: 3px solid transparent;
+  }
+  .nav-item:hover { background: rgba(255,255,255,.07); }
+  .nav-item.active { background: rgba(10,124,255,.15); border-right-color: #0a7cff; color: #0a7cff; }
+  .main { margin-right: 220px; padding: 28px 32px; min-height: 100vh; }
+
+  /* ── Header ── */
+  .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+  .page-header h1 { font-size: 22px; font-weight: 700; }
+
+  /* ── Cards ── */
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+  .stat-card {
+    background: #fff; border-radius: 12px; padding: 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.08);
+  }
+  .stat-card .label { font-size: 12px; color: #888; margin-bottom: 6px; }
+  .stat-card .value { font-size: 28px; font-weight: 800; color: #0a7cff; }
+  .stat-card .sub { font-size: 12px; color: #aaa; margin-top: 4px; }
+
+  /* ── Table ── */
+  .card {
+    background: #fff; border-radius: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.08); overflow: hidden; margin-bottom: 24px;
+  }
+  .card-header {
+    padding: 16px 20px; border-bottom: 1px solid #f0f0f0;
+    display: flex; justify-content: space-between; align-items: center;
+    font-weight: 700; font-size: 15px;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th { padding: 10px 16px; text-align: right; font-size: 12px; color: #888; background: #fafafa; font-weight: 600; }
+  td { padding: 14px 16px; font-size: 14px; border-top: 1px solid #f5f5f5; vertical-align: middle; }
+  tr:hover td { background: #fafcff; }
+  .badge {
+    display: inline-block; padding: 3px 10px; border-radius: 20px;
+    font-size: 11px; font-weight: 600;
+  }
+  .badge-green { background: #e6f9ee; color: #1a9e4a; }
+  .badge-blue  { background: #e6f0ff; color: #0a7cff; }
+  .badge-gray  { background: #f0f0f0; color: #888; }
+
+  /* ── Buttons ── */
+  .btn {
+    padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer;
+    font-size: 13px; font-weight: 600; transition: opacity .15s;
+  }
+  .btn:hover { opacity: .85; }
+  .btn-primary { background: #0a7cff; color: #fff; }
+  .btn-outline { background: #fff; color: #0a7cff; border: 1px solid #0a7cff; }
+  .btn-danger  { background: #fff; color: #e53935; border: 1px solid #e53935; }
+  .btn-sm { padding: 5px 12px; font-size: 12px; }
+  .btn-copy { background: #f0f2f5; color: #555; border: none; padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+  .btn-copy:hover { background: #e0e4ea; }
+
+  /* ── Modal ── */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.45);
+    display: flex; align-items: center; justify-content: center; z-index: 1000;
+  }
+  .modal-overlay.hidden { display: none; }
+  .modal {
+    background: #fff; border-radius: 16px; padding: 28px;
+    width: 520px; max-width: 95vw; max-height: 85vh; overflow-y: auto;
+    box-shadow: 0 8px 32px rgba(0,0,0,.18);
+  }
+  .modal h2 { font-size: 18px; margin-bottom: 20px; }
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; }
+  .form-group input, .form-group textarea, .form-group select {
+    width: 100%; padding: 10px 14px; border: 1px solid #ddd; border-radius: 8px;
+    font-size: 14px; outline: none; font-family: inherit; direction: rtl;
+  }
+  .form-group input:focus, .form-group textarea:focus { border-color: #0a7cff; }
+  .form-group textarea { min-height: 140px; resize: vertical; }
+  .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+  /* ── Code block ── */
+  .code-block {
+    background: #1e1e1e; color: #9cdcfe; padding: 14px 16px; border-radius: 8px;
+    font-family: monospace; font-size: 12px; word-break: break-all;
+    position: relative; direction: ltr; text-align: left; margin-top: 8px;
+  }
+  .copy-btn-abs { position: absolute; top: 8px; left: 8px; }
+
+  /* ── Empty state ── */
+  .empty { text-align: center; padding: 48px; color: #aaa; }
+  .empty .icon { font-size: 40px; margin-bottom: 12px; }
+  .empty p { font-size: 14px; }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed; bottom: 24px; left: 24px; z-index: 2000;
+    background: #222; color: #fff; padding: 12px 20px; border-radius: 10px;
+    font-size: 14px; opacity: 0; transition: opacity .3s;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+
+  /* ── Login ── */
+  .login-wrap {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    background: #f0f2f5;
+  }
+  .login-box {
+    background: #fff; border-radius: 16px; padding: 40px 36px;
+    width: 360px; box-shadow: 0 4px 24px rgba(0,0,0,.1); text-align: center;
+  }
+  .login-box h1 { font-size: 24px; color: #0a7cff; margin-bottom: 8px; }
+  .login-box p { font-size: 13px; color: #888; margin-bottom: 28px; }
+  #login-key { width: 100%; padding: 12px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; margin-bottom: 14px; text-align: center; }
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .api-key-cell { font-family: monospace; font-size: 12px; color: #555; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .knowledge-preview { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #888; font-size: 13px; }
+  .actions-cell { display: flex; gap: 6px; flex-wrap: wrap; }
+  .btn-wa  { background: #25d366; color: #fff; border: none; }
+  .btn-fb  { background: #0866ff; color: #fff; border: none; }
+  /* QR modal */
+  #qr-img { width: 220px; height: 220px; display: block; margin: 16px auto; border-radius: 12px; }
+  .qr-status { text-align: center; font-size: 14px; color: #555; margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<!-- Login Screen -->
+<div class="login-wrap" id="login-screen">
+  <div class="login-box">
+    <h1>NileChat 🇦🇪</h1>
+    <p>منصة خدمة العملاء بالذكاء الاصطناعي</p>
+    <input id="login-key" type="password" placeholder="أدخل مفتاح الإدارة..." />
+    <button class="btn btn-primary" style="width:100%;padding:12px" onclick="login()">دخول</button>
+    <p id="login-err" style="color:#e53935;font-size:12px;margin-top:10px;display:none">مفتاح خاطئ</p>
+  </div>
+</div>
+
+<!-- Main App -->
+<div id="app" style="display:none">
+  <div class="sidebar">
+    <div class="logo">Nile<span>Chat</span></div>
+    <div class="nav-item active" onclick="showSection('companies')" id="nav-companies">🏢 الشركات</div>
+    <div class="nav-item" onclick="showSection('widget')" id="nav-widget">🧩 كود التضمين</div>
+    <div class="nav-item" onclick="showSection('docs')" id="nav-docs">📖 طريقة الاستخدام</div>
+  </div>
+
+  <div class="main">
+    <!-- ── Companies Section ── -->
+    <div class="section active" id="section-companies">
+      <div class="page-header">
+        <h1>🏢 الشركات المسجلة</h1>
+        <button class="btn btn-primary" onclick="openAddModal()">+ إضافة شركة</button>
+      </div>
+
+      <div class="stats-row" id="stats-row">
+        <div class="stat-card"><div class="label">إجمالي الشركات</div><div class="value" id="stat-total">-</div></div>
+        <div class="stat-card"><div class="label">البوت</div><div class="value" style="color:#1a9e4a">✅</div><div class="sub">يعمل</div></div>
+        <div class="stat-card"><div class="label">واتساب</div><div class="value" style="color:#1a9e4a">✅</div><div class="sub">متصل</div></div>
+        <div class="stat-card"><div class="label">ماسنجر</div><div class="value" style="color:#1a9e4a">✅</div><div class="sub">متصل</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">قائمة الشركات</div>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>اسم الشركة</th>
+              <th>API Key</th>
+              <th>قاعدة المعرفة</th>
+              <th>تاريخ الإضافة</th>
+              <th>إجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="companies-table">
+            <tr><td colspan="6"><div class="empty"><div class="icon">⏳</div><p>جار التحميل...</p></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── Widget Section ── -->
+    <div class="section" id="section-widget">
+      <div class="page-header"><h1>🧩 كود التضمين</h1></div>
+      <div class="card">
+        <div class="card-header">اختر شركة</div>
+        <div style="padding:20px">
+          <div class="form-group">
+            <label>الشركة</label>
+            <select id="widget-company-select" onchange="updateEmbedCode()">
+              <option value="">-- اختر شركة --</option>
+            </select>
+          </div>
+          <div id="embed-section" style="display:none">
+            <div class="form-group">
+              <label>كود التضمين — الصق في أي موقع قبل &lt;/body&gt;</label>
+              <div class="code-block" id="embed-code-display">
+                <button class="btn-copy copy-btn-abs" onclick="copyEmbed()">نسخ</button>
+                <span id="embed-code-text"></span>
+              </div>
+            </div>
+            <div class="form-group" style="margin-top:20px">
+              <label>تجربة مباشرة</label>
+              <iframe id="widget-preview" src="" style="width:100%;height:420px;border:1px solid #eee;border-radius:10px"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Docs Section ── -->
+    <div class="section" id="section-docs">
+      <div class="page-header"><h1>📖 طريقة الاستخدام</h1></div>
+      <div class="card">
+        <div style="padding:24px;line-height:2">
+          <h3 style="margin-bottom:16px">خطوات إضافة البوت على موقعك</h3>
+          <ol style="padding-right:20px;font-size:14px;color:#444">
+            <li style="margin-bottom:12px">اضغط على <strong>إضافة شركة</strong> وأدخل اسم شركتك ومعلوماتها (منتجات، أسعار، سياسات)</li>
+            <li style="margin-bottom:12px">بعد الإضافة، اذهب لتبويب <strong>كود التضمين</strong></li>
+            <li style="margin-bottom:12px">اختر شركتك وانسخ الكود</li>
+            <li style="margin-bottom:12px">الصق الكود في موقعك قبل <code style="background:#f0f0f0;padding:2px 6px;border-radius:4px">&lt;/body&gt;</code></li>
+            <li style="margin-bottom:12px">هيظهر زرار الشات في الركن السفلي لموقعك!</li>
+          </ol>
+          <hr style="margin:24px 0;border:none;border-top:1px solid #f0f0f0">
+          <h3 style="margin-bottom:16px">نصائح لكتابة قاعدة المعرفة</h3>
+          <ul style="padding-right:20px;font-size:14px;color:#444">
+            <li style="margin-bottom:8px">اكتب المنتجات والأسعار بشكل واضح</li>
+            <li style="margin-bottom:8px">أضف ساعات العمل والعنوان</li>
+            <li style="margin-bottom:8px">اكتب سياسة الإرجاع والضمان</li>
+            <li style="margin-bottom:8px">أضف الأسئلة الشائعة اللي بيسألها العملاء كتير</li>
+            <li style="margin-bottom:8px">كل ما تكون المعلومات أوضح، كل ما يكون البوت أدق</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Company Modal -->
+<div class="modal-overlay hidden" id="company-modal">
+  <div class="modal">
+    <h2 id="modal-title">إضافة شركة جديدة</h2>
+    <div class="form-group">
+      <label>اسم الشركة *</label>
+      <input type="text" id="f-name" placeholder="مثال: Jadore للمجوهرات" />
+    </div>
+    <div class="form-group">
+      <label>رسالة الترحيب</label>
+      <input type="text" id="f-welcome" placeholder="أهلاً! كيف أقدر أساعدك؟" />
+    </div>
+    <div class="form-group">
+      <label>قاعدة المعرفة — معلومات الشركة (منتجات، أسعار، سياسات، ساعات عمل...)</label>
+      <textarea id="f-knowledge" placeholder="المنتجات:&#10;- خواتم ذهب: تبدأ من 1500 جنيه&#10;- أساور فضة: تبدأ من 300 جنيه&#10;&#10;ساعات العمل: 10 ص - 10 م&#10;العنوان: مول العرب&#10;واتساب: 01012345678"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal()">إلغاء</button>
+      <button class="btn btn-primary" id="modal-save-btn" onclick="saveCompany()">حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- QR Code Modal (WhatsApp) -->
+<div class="modal-overlay hidden" id="qr-modal">
+  <div class="modal" style="max-width:340px;text-align:center">
+    <h2>📱 ربط واتساب</h2>
+    <p style="font-size:13px;color:#888;margin-bottom:12px">افتح واتساب → الأجهزة المرتبطة → ربط جهاز → امسح الكود</p>
+    <img id="qr-img" src="" alt="QR Code" style="display:none" />
+    <div id="qr-spinner" style="padding:32px;font-size:32px">⏳</div>
+    <p class="qr-status" id="qr-status">جار التحضير...</p>
+    <div class="modal-footer" style="justify-content:center;margin-top:16px">
+      <button class="btn btn-outline" onclick="closeQrModal()">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+const BASE = window.location.origin;
+let ADMIN_KEY = '';
+let companies = [];
+let editingId = null;
+
+// ── Auth ──────────────────────────────────────────────────────────────────
+async function login() {
+  const key = document.getElementById('login-key').value.trim();
+  try {
+    const r = await apiFetch('/admin/companies', 'GET', null, key);
+    if (r.ok) {
+      ADMIN_KEY = key;
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      loadCompanies();
+    } else {
+      document.getElementById('login-err').style.display = 'block';
+    }
+  } catch { document.getElementById('login-err').style.display = 'block'; }
+}
+document.getElementById('login-key').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+
+// ── API helpers ───────────────────────────────────────────────────────────
+async function apiFetch(path, method = 'GET', body = null, key = null) {
+  const headers = { 'x-admin-key': key || ADMIN_KEY };
+  if (body) headers['Content-Type'] = 'application/json';
+  return fetch(BASE + path, { method, headers, body: body ? JSON.stringify(body) : null });
+}
+
+// ── Navigation ────────────────────────────────────────────────────────────
+function showSection(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('section-' + name).classList.add('active');
+  document.getElementById('nav-' + name).classList.add('active');
+  if (name === 'widget') populateWidgetSelect();
+}
+
+// ── Load companies ────────────────────────────────────────────────────────
+async function loadCompanies() {
+  const r = await apiFetch('/admin/companies');
+  companies = await r.json();
+  document.getElementById('stat-total').textContent = companies.length;
+  renderTable();
+}
+
+function renderTable() {
+  const tbody = document.getElementById('companies-table');
+  if (!companies.length) {
+    tbody.innerHTML = '<tr><td colspan="6"><div class="empty"><div class="icon">🏢</div><p>لا يوجد شركات بعد. أضف أول شركة!</p></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = companies.map((c, i) => `
+    <tr>
+      <td>${i + 1}</td>
+      <td><strong>${c.name}</strong></td>
+      <td>
+        <span class="api-key-cell" title="${c.api_key}">${c.api_key.slice(0, 18)}...</span>
+        <button class="btn-copy" onclick="copyText('${c.api_key}')">نسخ</button>
+      </td>
+      <td><span class="knowledge-preview">${c.knowledge_base ? c.knowledge_base.slice(0, 60) + '...' : '<span style="color:#ccc">لا يوجد</span>'}</span></td>
+      <td style="font-size:12px;color:#888">${new Date(c.created_at).toLocaleDateString('ar-EG')}</td>
+      <td>
+        <div class="actions-cell">
+          <button class="btn btn-outline btn-sm" onclick="openEditModal(${c.id})">تعديل</button>
+          <button class="btn btn-outline btn-sm" onclick="showEmbedFor('${c.api_key}')">كود</button>
+          <button class="btn btn-sm btn-wa" onclick="connectWhatsApp(${c.id})">📱 واتساب</button>
+          <button class="btn btn-sm btn-fb" onclick="connectMessenger('${c.api_key}')">💬 ماسنجر</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// ── Add/Edit Modal ─────────────────────────────────────────────────────────
+function openAddModal() {
+  editingId = null;
+  document.getElementById('modal-title').textContent = 'إضافة شركة جديدة';
+  document.getElementById('modal-save-btn').textContent = 'إضافة';
+  document.getElementById('f-name').value = '';
+  document.getElementById('f-welcome').value = '';
+  document.getElementById('f-knowledge').value = '';
+  document.getElementById('company-modal').classList.remove('hidden');
+}
+
+function openEditModal(id) {
+  const c = companies.find(x => x.id === id);
+  if (!c) return;
+  editingId = id;
+  document.getElementById('modal-title').textContent = 'تعديل: ' + c.name;
+  document.getElementById('modal-save-btn').textContent = 'حفظ التعديلات';
+  document.getElementById('f-name').value = c.name || '';
+  document.getElementById('f-welcome').value = c.welcome_message || '';
+  document.getElementById('f-knowledge').value = c.knowledge_base || '';
+  document.getElementById('company-modal').classList.remove('hidden');
+}
+
+function closeModal() {
+  document.getElementById('company-modal').classList.add('hidden');
+}
+
+async function saveCompany() {
+  const name = document.getElementById('f-name').value.trim();
+  const welcome = document.getElementById('f-welcome').value.trim();
+  const knowledge = document.getElementById('f-knowledge').value.trim();
+  if (!name) { toast('أدخل اسم الشركة'); return; }
+
+  if (editingId) {
+    await apiFetch(`/admin/companies/${editingId}/knowledge`, 'PUT', { knowledge_base: knowledge, welcome_message: welcome || null });
+    toast('✅ تم حفظ التعديلات');
+  } else {
+    await apiFetch('/admin/companies', 'POST', { name, knowledge_base: knowledge || null, welcome_message: welcome || null });
+    toast('✅ تمت إضافة الشركة');
+  }
+  closeModal();
+  loadCompanies();
+}
+
+// ── Widget / Embed ─────────────────────────────────────────────────────────
+function populateWidgetSelect() {
+  const sel = document.getElementById('widget-company-select');
+  sel.innerHTML = '<option value="">-- اختر شركة --</option>' +
+    companies.map(c => `<option value="${c.api_key}">${c.name}</option>`).join('');
+}
+
+function updateEmbedCode() {
+  const key = document.getElementById('widget-company-select').value;
+  if (!key) { document.getElementById('embed-section').style.display = 'none'; return; }
+  const snippet = `<script src="${BASE}/widget.js" data-api-key="${key}"><\/script>`;
+  document.getElementById('embed-code-text').textContent = snippet;
+  document.getElementById('embed-section').style.display = 'block';
+  document.getElementById('widget-preview').src = `${BASE}/static/preview.html?key=${key}`;
+}
+
+function showEmbedFor(apiKey) {
+  showSection('widget');
+  setTimeout(() => {
+    document.getElementById('widget-company-select').value = apiKey;
+    updateEmbedCode();
+  }, 100);
+}
+
+function copyEmbed() {
+  const txt = document.getElementById('embed-code-text').textContent;
+  copyText(txt);
+}
+
+// ── Utils ──────────────────────────────────────────────────────────────────
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => toast('✅ تم النسخ'));
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+// ── WhatsApp QR ────────────────────────────────────────────────────────────
+let qrPollTimer = null;
+let currentQrCompanyId = null;
+
+async function connectWhatsApp(companyId) {
+  currentQrCompanyId = companyId;
+  document.getElementById('qr-modal').classList.remove('hidden');
+  document.getElementById('qr-img').style.display = 'none';
+  document.getElementById('qr-spinner').style.display = 'block';
+  document.getElementById('qr-status').textContent = 'جار بدء الاتصال...';
+
+  // Tell the Node.js service to start a session
+  await fetch(`${BASE}/admin/companies/${companyId}/connect-whatsapp`, {
+    method: 'POST', headers: { 'x-admin-key': ADMIN_KEY }
+  }).catch(() => {});
+
+  // Poll for QR code
+  qrPollTimer = setInterval(() => pollQr(companyId), 2000);
+}
+
+async function pollQr(companyId) {
+  try {
+    const r = await fetch(`${BASE}/admin/companies/${companyId}/whatsapp-qr`, {
+      headers: { 'x-admin-key': ADMIN_KEY }
+    });
+    const data = await r.json();
+
+    if (data.status === 'ready') {
+      clearInterval(qrPollTimer);
+      document.getElementById('qr-spinner').style.display = 'none';
+      document.getElementById('qr-img').style.display = 'none';
+      document.getElementById('qr-status').textContent = '✅ واتساب متصل بنجاح!';
+      document.getElementById('qr-status').style.color = '#1a9e4a';
+      toast('✅ واتساب متصل!');
+      return;
+    }
+    if (data.status === 'qr_ready' && data.qr) {
+      document.getElementById('qr-spinner').style.display = 'none';
+      document.getElementById('qr-img').src = data.qr;
+      document.getElementById('qr-img').style.display = 'block';
+      document.getElementById('qr-status').textContent = 'امسح الكود بواتساب';
+    }
+  } catch (e) {
+    document.getElementById('qr-status').textContent = 'خدمة واتساب غير متاحة — تأكد أن Node.js شغال';
+  }
+}
+
+function closeQrModal() {
+  clearInterval(qrPollTimer);
+  document.getElementById('qr-modal').classList.add('hidden');
+}
+
+// ── Messenger OAuth ─────────────────────────────────────────────────────────
+function connectMessenger(apiKey) {
+  const url = `${BASE}/messenger-oauth/start?api_key=${apiKey}`;
+  window.open(url, '_blank', 'width=600,height=700');
+  toast('افتح الصفحة الجديدة واربط صفحة الفيسبوك');
+}
+</script>
+</body>
+</html>
