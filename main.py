@@ -3,10 +3,11 @@ import logging
 import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
 from dotenv import load_dotenv
-from db import get_pool, close_pool
+from db import get_pool, close_pool, list_companies
 from whatsapp import router as whatsapp_router
 from messenger import router as messenger_router
 from webchat import router as webchat_router
@@ -56,6 +57,9 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="NileChat SaaS", lifespan=lifespan)
+# The widget runs on clients' own websites, so the public chat API must accept
+# cross-site requests. Admin routes stay protected by the x-admin-key header.
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 app.include_router(whatsapp_router)
 app.include_router(messenger_router)
 app.include_router(webchat_router)
@@ -73,6 +77,16 @@ async def serve_widget():
 @app.get("/dashboard")
 async def serve_dashboard():
     return FileResponse("static/dashboard.html", media_type="text/html")
+
+
+@app.get("/demo")
+async def serve_demo():
+    """Short link to the demo site with the demo client's widget."""
+    from seed_demo import NAME
+    company = next((c for c in await list_companies() if c["name"] == NAME), None)
+    if not company:
+        return {"error": "Demo client missing — run seed_demo.py"}
+    return RedirectResponse(f"/static/demo.html?key={company['api_key']}")
 
 
 @app.get("/")

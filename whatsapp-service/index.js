@@ -3,6 +3,7 @@
  * Each company connects their own WhatsApp number by scanning a QR code.
  * Receives messages → forwards to Python backend → sends reply back.
  */
+const fs = require('fs');
 const { Client, LocalAuth, MessageMedia } = require('whatsapp-web.js');
 const express = require('express');
 const qrcode = require('qrcode');
@@ -14,6 +15,11 @@ app.use(express.json());
 
 const PORT = process.env.WA_SERVICE_PORT || 3001;
 const PYTHON_BACKEND = process.env.PYTHON_BACKEND_URL || 'http://localhost:8000';
+const ADMIN_KEY = process.env.ADMIN_API_KEY;
+// Where each company's WhatsApp login is saved, so it survives restarts
+const AUTH_DIR = process.env.WA_AUTH_DIR || '.wwebjs_auth';
+const CHROME_PATH = process.env.CHROME_PATH ||
+  (process.platform === 'win32' ? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe' : undefined);
 
 // Store active clients per company
 const clients = {};   // companyId → WhatsApp Client
@@ -30,10 +36,10 @@ function createClient(companyId) {
   qrCodes[companyId] = null;
 
   const client = new Client({
-    authStrategy: new LocalAuth({ clientId: `company-${companyId}` }),
+    authStrategy: new LocalAuth({ clientId: `company-${companyId}`, dataPath: AUTH_DIR }),
     puppeteer: {
       headless: true,
-      executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+      executablePath: CHROME_PATH,
       args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
     },
   });
@@ -68,7 +74,7 @@ function createClient(companyId) {
         company_id: companyId,
         phone,
         message: text,
-      }, { timeout: 120000 });
+      }, { timeout: 120000, headers: { 'x-admin-key': ADMIN_KEY } });
 
       const reply = res.data?.reply;
       if (reply) {
@@ -145,6 +151,19 @@ app.get('/health', (req, res) => {
   res.json({ ok: true, sessions: summary });
 });
 
+// Reconnect every company that paired before the last restart
+function restoreSessions() {
+  if (!fs.existsSync(AUTH_DIR)) return;
+  for (const dir of fs.readdirSync(AUTH_DIR)) {
+    const m = dir.match(/^session-company-(\d+)$/);
+    if (m) {
+      console.log(`[Company ${m[1]}] Restoring saved session`);
+      createClient(m[1]);
+    }
+  }
+}
+
 app.listen(PORT, () => {
   console.log(`WhatsApp QR Service running on port ${PORT}`);
+  restoreSessions();
 });

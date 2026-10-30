@@ -9,13 +9,25 @@ from db import create_company, get_company_by_id, update_company_knowledge, list
 load_dotenv()
 logger = logging.getLogger(__name__)
 
-ADMIN_KEY = os.getenv("ADMIN_API_KEY", "nilechat_admin_secret")
+ADMIN_KEY = os.getenv("ADMIN_API_KEY")
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
 
+def _base_url() -> str:
+    """Public URL of this server, used in the embed snippet."""
+    base = os.getenv("BASE_URL", "")
+    if not base:
+        try:
+            with open("tunnel_url.txt") as f:
+                base = f.read().strip()
+        except Exception:
+            pass
+    return base.rstrip("/")
+
+
 def _check_admin(x_admin_key: str):
-    if x_admin_key != ADMIN_KEY:
+    if not ADMIN_KEY or x_admin_key != ADMIN_KEY:
         raise HTTPException(status_code=401, detail="Invalid admin key")
 
 
@@ -40,12 +52,7 @@ async def get_companies(x_admin_key: str = Header(...)):
 async def add_company(body: CompanyCreate, x_admin_key: str = Header(...)):
     _check_admin(x_admin_key)
     company = await create_company(body.name, body.knowledge_base, body.welcome_message)
-    tunnel = ""
-    try:
-        with open("tunnel_url.txt") as f:
-            tunnel = f.read().strip()
-    except Exception:
-        pass
+    tunnel = _base_url()
     return {
         **company,
         "embed_snippet": (
@@ -71,12 +78,7 @@ async def get_company(company_id: int, x_admin_key: str = Header(...)):
     company = await get_company_by_id(company_id)
     if not company:
         raise HTTPException(status_code=404, detail="Company not found")
-    tunnel = ""
-    try:
-        with open("tunnel_url.txt") as f:
-            tunnel = f.read().strip()
-    except Exception:
-        pass
+    tunnel = _base_url()
     return {
         **company,
         "embed_snippet": (

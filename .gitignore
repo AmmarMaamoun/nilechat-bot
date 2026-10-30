@@ -39,3 +39,7 @@ nilechat_test_result.txt
 # OS
 .DS_Store
 Thumbs.db
+
+# Local database
+nilechat.db
+nilechat.db-*

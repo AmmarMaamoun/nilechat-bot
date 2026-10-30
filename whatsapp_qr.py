@@ -12,13 +12,13 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 
 WA_SERVICE_URL = os.getenv("WA_SERVICE_URL", "http://localhost:3001")
-ADMIN_KEY      = os.getenv("ADMIN_API_KEY", "nilechat_admin_secret")
+ADMIN_KEY      = os.getenv("ADMIN_API_KEY")
 
 router = APIRouter(tags=["whatsapp-qr"])
 
 
 def _check_admin(x_admin_key: str = Header(...)):
-    if x_admin_key != ADMIN_KEY:
+    if not ADMIN_KEY or x_admin_key != ADMIN_KEY:
         raise HTTPException(status_code=401, detail="Invalid admin key")
 
 
@@ -33,8 +33,9 @@ class ConnectRequest(BaseModel):
 
 
 @router.post("/webhook/whatsapp-qr")
-async def receive_qr_message(body: QRMessage):
+async def receive_qr_message(body: QRMessage, x_admin_key: str = Header(...)):
     """Receive message from Node.js WhatsApp service → NileChat → return reply."""
+    _check_admin(x_admin_key)  # only our own WhatsApp service may call this
     company = await get_company_by_id(body.company_id)
     if not company:
         raise HTTPException(status_code=404, detail="Company not found")

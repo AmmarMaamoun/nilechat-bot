@@ -80,20 +80,8 @@ async def oauth_callback(request: Request, code: str = None, state: str = None, 
         )
 
     # Save page token to company record via DB
-    # We repurpose welcome_message temporarily — in production add messenger_token column
-    from db import get_pool
-    pool = await get_pool()
-    async with pool.acquire() as conn:
-        company = await conn.fetchrow(
-            "SELECT id, name FROM companies WHERE api_key = $1", api_key
-        )
-        if company:
-            await conn.execute(
-                """UPDATE companies
-                   SET messenger_page_id = $1, messenger_page_token = $2
-                   WHERE api_key = $3""",
-                page_id, page_token, api_key,
-            )
+    from db import set_company_messenger
+    await set_company_messenger(api_key, page_id, page_token)
 
     return HTMLResponse(f"""
     <html><body style="font-family:sans-serif;text-align:center;padding:60px;background:#f0f2f5">
