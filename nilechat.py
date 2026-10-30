@@ -12,6 +12,14 @@ load_dotenv()
 HF_API_KEY = os.getenv("HF_API_KEY")
 SPACE_URL = "https://mbzuai-paris-nile-chat-12b.hf.space"
 
+# Which model answers customers. "nilechat" (default) = Nile-Chat-12B Space.
+# "chat_completions" = any provider exposing a /chat/completions endpoint
+# (set LLM_BASE_URL, LLM_API_KEY, LLM_MODEL) — swap models without code changes.
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "nilechat")
+LLM_BASE_URL = os.getenv("LLM_BASE_URL", "").rstrip("/")
+LLM_API_KEY = os.getenv("LLM_API_KEY")
+LLM_MODEL = os.getenv("LLM_MODEL")
+
 _context_cache: dict[int, list[dict]] = {}
 _space_warm = False
 
@@ -41,7 +49,7 @@ async def _call_nilechat(message: str, history: list[dict], system_prompt: str =
             gradio_history, # chat history
             1024,           # max_new_tokens
             True,           # do_sample
-            0.6,            # temperature
+            0.2,            # temperature (low = sticks to the facts)
             0.9,            # top_p
             50,             # top_k
             1.1,            # repetition_penalty
@@ -90,6 +98,31 @@ async def _call_nilechat(message: str, history: list[dict], system_prompt: str =
         return "مش فاهم — ممكن تعيد؟"
 
 
+async def _call_chat_completions(message: str, history: list[dict], system_prompt: str = None) -> str:
+    """Call a standard /chat/completions endpoint with conversation history."""
+    if not (LLM_BASE_URL and LLM_MODEL):
+        raise EnvironmentError("LLM_BASE_URL and LLM_MODEL must be set for LLM_PROVIDER=chat_completions")
+
+    messages = [{"role": "system", "content": system_prompt}] if system_prompt else []
+    messages += history + [{"role": "user", "content": message}]
+    headers = {"Authorization": f"Bearer {LLM_API_KEY}"} if LLM_API_KEY else {}
+
+    async with httpx.AsyncClient(timeout=120.0, headers=headers) as client:
+        r = await client.post(
+            f"{LLM_BASE_URL}/chat/completions",
+            json={"model": LLM_MODEL, "messages": messages, "temperature": 0.6, "max_tokens": 1024},
+        )
+        if r.status_code != 200:
+            return f"معلش، مشكلة في الاتصال ({r.status_code})"
+        return r.json()["choices"][0]["message"]["content"]
+
+
+async def _call_model(message: str, history: list[dict], system_prompt: str = None) -> str:
+    if LLM_PROVIDER == "chat_completions":
+        return await _call_chat_completions(message, history, system_prompt)
+    return await _call_nilechat(message, history, system_prompt)
+
+
 def _format_history(messages: list[dict]) -> list[dict]:
     return [
         {"role": "user" if m["role"] == "user" else "assistant", "content": m["content"]}
@@ -122,7 +155,8 @@ def _build_system_prompt(company_name: str, knowledge_base: str) -> str:
         f"قواعد مهمة:\n"
         f"- رد فقط على الأسئلة المتعلقة بمعلومات الشركة المذكورة أعلاه.\n"
         f"- لو السؤال مش موجود في المعلومات، قول: 'عذراً، مش عندي معلومات عن ده. تواصل مع فريقنا مباشرة.'\n"
-        f"- لا تخترع معلومات أو أسعار غير موجودة في المعلومات.\n"
+        f"- لا تخترع معلومات أو أسعار غير موجودة في المعلومات. قول الأسعار بالظبط زي ما هي مكتوبة.\n"
+        f"- متناديش العميل بأي اسم إلا لو هو قال اسمه.\n"
         f"- ابدأ دايماً بالترحيب بالعميل بإسم الشركة {company_name}."
     )
 
@@ -146,7 +180,7 @@ async def reply(
     if knowledge_base and company_name:
         system_prompt = _build_system_prompt(company_name, knowledge_base)
 
-    bot_reply = await _call_nilechat(user_text, history, system_prompt)
+    bot_reply = await _call_model(user_text, history, system_prompt)
 
     await save_message(conv_id, "user", user_text)
     await save_message(conv_id, "bot", bot_reply)
