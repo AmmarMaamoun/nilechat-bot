@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="960" viewBox="0 0 1600 960">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#e8e8e8"/></marker><marker id="ahb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#7fb0ff"/></marker></defs>
+<rect width="1600" height="960" fill="#161616"/>
+<rect x="8" y="8" width="1584" height="944" rx="6" fill="#1c1c1c" stroke="#3a3a3a"/>
+<rect x="22" y="22" width="239.39999999999998" height="30" rx="5" fill="#1c1c1c" stroke="#777"/>
+<text x="34" y="42" fill="#eee" font-size="15" font-family="Segoe UI" font-weight="600">NileChat · Message workflow</text>
+<text x="269.4" y="42" fill="#9a9a9a" font-size="13" font-family="Segoe UI">what happens between a customer&#x27;s question and the bot&#x27;s answer</text>
+<rect x="30" y="150" width="230" height="300" rx="14" fill="rgba(70,52,28,0.30)" stroke="#8a6a3c" stroke-width="2"/>
+<rect x="40" y="160" width="102.8" height="24" rx="5" fill="#202020" stroke="#8d8d8d"/>
+<text x="49" y="177" fill="#ddd" font-size="11" font-family="Segoe UI Symbol">▤</text>
+<text x="64" y="177" fill="#e6e6e6" font-size="11.5" font-family="Segoe UI" font-weight="700" letter-spacing="0.6">CUSTOMER</text>
+<rect x="320" y="150" width="1250" height="300" rx="14" fill="rgba(28,48,88,0.40)" stroke="#4f7bbf" stroke-width="2"/>
+<rect x="330" y="160" width="159.5" height="24" rx="5" fill="#202020" stroke="#8d8d8d"/>
+<text x="339" y="177" fill="#ddd" font-size="11" font-family="Segoe UI Symbol">▣</text>
+<text x="354" y="177" fill="#e6e6e6" font-size="11.5" font-family="Segoe UI" font-weight="700" letter-spacing="0.6">FASTAPI BACKEND</text>
+<rect x="320" y="560" width="1250" height="300" rx="14" fill="rgba(25,70,35,0.30)" stroke="#4f9a5a" stroke-width="2"/>
+<rect x="330" y="570" width="159.5" height="24" rx="5" fill="#202020" stroke="#8d8d8d"/>
+<text x="339" y="587" fill="#ddd" font-size="11" font-family="Segoe UI Symbol">✓</text>
+<text x="354" y="587" fill="#e6e6e6" font-size="11.5" font-family="Segoe UI" font-weight="700" letter-spacing="0.6">SAVE AND ANSWER</text>
+<path d="M169.0 300.0 C280.1 300.0 304.9 300.0 416.0 300.0" fill="none" stroke="#e8e8e8" stroke-opacity="0.85" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M464.0 300.0 C550.4 300.0 569.6 300.0 656.0 300.0" fill="none" stroke="#e8e8e8" stroke-opacity="0.85" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M704.0 300.0 C790.4 300.0 809.6 300.0 896.0 300.0" fill="none" stroke="#e8e8e8" stroke-opacity="0.85" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M944.0 300.0 C1030.4 300.0 1049.6 300.0 1136.0 300.0" fill="none" stroke="#e8e8e8" stroke-opacity="0.85" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M1184.0 300.0 C1279.4 300.0 1300.6 300.0 1396.0 300.0" fill="none" stroke="#e8e8e8" stroke-opacity="0.85" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M1420.0 354.0 C1420.0 503.4 1420.0 536.6 1420.0 686.0" fill="none" stroke="#e8e8e8" stroke-opacity="0.85" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M1396.0 710.0 C1246.6 710.0 1213.4 710.0 1064.0 710.0" fill="none" stroke="#e8e8e8" stroke-opacity="0.85" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M1016.0 710.0 C821.6 710.0 778.4 710.0 584.0 710.0" fill="none" stroke="#e8e8e8" stroke-opacity="0.85" stroke-width="1.6" marker-end="url(#ah)"/>
+<rect x="284.4" y="290.0" width="16.3" height="19" rx="4" fill="#1c1c1c" stroke="#555"/>
+<text x="292.5" y="304.0" text-anchor="middle" fill="#dcdcdc" font-size="11" font-family="Segoe UI">1</text>
+<rect x="551.9" y="290.0" width="16.3" height="19" rx="4" fill="#1c1c1c" stroke="#555"/>
+<text x="560.0" y="304.0" text-anchor="middle" fill="#dcdcdc" font-size="11" font-family="Segoe UI">2</text>
+<rect x="791.9" y="290.0" width="16.3" height="19" rx="4" fill="#1c1c1c" stroke="#555"/>
+<text x="800.0" y="304.0" text-anchor="middle" fill="#dcdcdc" font-size="11" font-family="Segoe UI">3</text>
+<rect x="1031.8" y="290.0" width="16.3" height="19" rx="4" fill="#1c1c1c" stroke="#555"/>
+<text x="1040.0" y="304.0" text-anchor="middle" fill="#dcdcdc" font-size="11" font-family="Segoe UI">4</text>
+<rect x="1281.8" y="290.0" width="16.3" height="19" rx="4" fill="#1c1c1c" stroke="#555"/>
+<text x="1290.0" y="304.0" text-anchor="middle" fill="#dcdcdc" font-size="11" font-family="Segoe UI">5</text>
+<rect x="1377.2" y="510.0" width="85.6" height="19" rx="4" fill="#1c1c1c" stroke="#555"/>
+<text x="1420.0" y="524.0" text-anchor="middle" fill="#dcdcdc" font-size="11" font-family="Segoe UI">6 reply text</text>
+<rect x="1221.8" y="700.0" width="16.3" height="19" rx="4" fill="#1c1c1c" stroke="#555"/>
+<text x="1230.0" y="714.0" text-anchor="middle" fill="#dcdcdc" font-size="11" font-family="Segoe UI">7</text>
+<rect x="791.9" y="700.0" width="16.3" height="19" rx="4" fill="#1c1c1c" stroke="#555"/>
+<text x="800.0" y="714.0" text-anchor="middle" fill="#dcdcdc" font-size="11" font-family="Segoe UI">8</text>
+<g transform="translate(145,300)"><rect x="-10" y="-17" width="20" height="34" rx="4" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><line x1="-3" y1="12" x2="3" y2="12" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/></g>
+<text x="145" y="338.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">Customer message</text>
+<text x="145" y="352.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">web / WhatsApp / Messenger</text>
+<g transform="translate(440,300)"><rect x="-22.0" y="-22.0" width="44" height="44" rx="6" fill="#F38020"/><path d="M0 -13 L11 -8 L11 1 C11 8 5 12 0 14 C-5 12 -11 8 -11 1 L-11 -8 Z" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/></g>
+<text x="440" y="338.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">Channel router: verify,</text>
+<text x="440" y="352.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">find company by key / page</text>
+<g transform="translate(680,300)"><ellipse cx="0" cy="-12" rx="15" ry="5" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><path d="M-15 -12 L-15 12 A15 5 0 0 0 15 12 L15 -12" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><path d="M-15 -2 A15 5 0 0 0 15 -2" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/></g>
+<text x="680" y="338.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">User + conversation</text>
+<text x="680" y="352.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">get or create</text>
+<g transform="translate(920,300)"><rect x="-22.0" y="-22.0" width="44" height="44" rx="6" fill="#C9302C"/><path d="M0 -12 L13 -6 L0 0 L-13 -6 Z" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><path d="M-13 0 L0 6 L13 0" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><path d="M-13 6 L0 12 L13 6" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/></g>
+<text x="920" y="338.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">Last messages</text>
+<text x="920" y="352.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">cache → SQLite</text>
+<g transform="translate(1160,300)"><rect x="-22.0" y="-22.0" width="44" height="44" rx="6" fill="#0F9D8A"/><circle cx="0" cy="0" r="6" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><line x1="8.0" y1="0.0" x2="12.0" y2="0.0" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><line x1="5.7" y1="5.7" x2="8.5" y2="8.5" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><line x1="0.0" y1="8.0" x2="0.0" y2="12.0" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><line x1="-5.7" y1="5.7" x2="-8.5" y2="8.5" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><line x1="-8.0" y1="0.0" x2="-12.0" y2="0.0" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><line x1="-5.7" y1="-5.7" x2="-8.5" y2="-8.5" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><line x1="-0.0" y1="-8.0" x2="-0.0" y2="-12.0" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><line x1="5.7" y1="-5.7" x2="8.5" y2="-8.5" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/></g>
+<text x="1160" y="338.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">System prompt</text>
+<text x="1160" y="352.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">company knowledge base</text>
+<g transform="translate(1420,300)"><rect x="-22.0" y="-22.0" width="44" height="44" rx="6" fill="#6E56CF"/><path d="M0 -13 L3 -3 L13 0 L3 3 L0 13 L-3 3 L-13 0 L-3 -3 Z" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/></g>
+<text x="1420" y="338.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">LLM call</text>
+<text x="1420" y="352.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">Nile-Chat-12B</text>
+<g transform="translate(1420,710)"><ellipse cx="0" cy="-12" rx="15" ry="5" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><path d="M-15 -12 L-15 12 A15 5 0 0 0 15 12 L15 -12" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><path d="M-15 -2 A15 5 0 0 0 15 -2" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/></g>
+<text x="1420" y="748.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">Save question</text>
+<text x="1420" y="762.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">+ answer</text>
+<g transform="translate(1040,710)"><rect x="-22.0" y="-22.0" width="44" height="44" rx="6" fill="#C9302C"/><path d="M0 -12 L13 -6 L0 0 L-13 -6 Z" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><path d="M-13 0 L0 6 L13 0" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><path d="M-13 6 L0 12 L13 6" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/></g>
+<text x="1040" y="748.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">Update memory</text>
+<text x="1040" y="762.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">last 10 turns</text>
+<g transform="translate(560,710)"><rect x="-10" y="-17" width="20" height="34" rx="4" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><line x1="-3" y1="12" x2="3" y2="12" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/></g>
+<text x="560" y="748.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">Reply sent back</text>
+<text x="560" y="762.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">on the same channel</text>
+<text x="340" y="520" transform="rotate(-2 340 520)" fill="#6fdc8c" font-size="16" font-family="Segoe Print, Comic Sans MS" font-weight="700">bad Meta signature → 401</text>
+<text x="980" y="135" transform="rotate(-1 980 135)" fill="#6fdc8c" font-size="16" font-family="Segoe Print, Comic Sans MS" font-weight="700">Egyptian Arabic only · don&#x27;t invent prices</text>
+<text x="1020" y="520" transform="rotate(-2 1020 520)" fill="#6fdc8c" font-size="16" font-family="Segoe Print, Comic Sans MS" font-weight="700">temperature 0.2 = stick to facts</text>
+<text x="560" y="900" transform="rotate(-1 560 900)" fill="#ff6b6b" font-size="17" font-family="Segoe Print, Comic Sans MS" font-weight="700">model can still guess when the FAQ is thin → keep the knowledge base rich</text>
+</svg>

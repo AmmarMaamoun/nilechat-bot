@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="960" viewBox="0 0 1600 960">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#e8e8e8"/></marker><marker id="ahb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#7fb0ff"/></marker></defs>
+<rect width="1600" height="960" fill="#161616"/>
+<rect x="8" y="8" width="1584" height="944" rx="6" fill="#1c1c1c" stroke="#3a3a3a"/>
+<rect x="22" y="22" width="280.4" height="30" rx="5" fill="#1c1c1c" stroke="#777"/>
+<text x="34" y="42" fill="#eee" font-size="15" font-family="Segoe UI" font-weight="600">NileChat · Onboarding a business</text>
+<text x="310.4" y="42" fill="#9a9a9a" font-size="13" font-family="Segoe UI">from new company to a live bot on three channels</text>
+<rect x="30" y="330" width="260" height="280" rx="14" fill="rgba(70,52,28,0.30)" stroke="#8a6a3c" stroke-width="2"/>
+<rect x="40" y="340" width="102.8" height="24" rx="5" fill="#202020" stroke="#8d8d8d"/>
+<text x="49" y="357" fill="#ddd" font-size="11" font-family="Segoe UI Symbol">▤</text>
+<text x="64" y="357" fill="#e6e6e6" font-size="11.5" font-family="Segoe UI" font-weight="700" letter-spacing="0.6">OPERATOR</text>
+<rect x="360" y="330" width="300" height="280" rx="14" fill="rgba(28,48,88,0.40)" stroke="#4f7bbf" stroke-width="2"/>
+<rect x="370" y="340" width="110.89999999999999" height="24" rx="5" fill="#202020" stroke="#8d8d8d"/>
+<text x="379" y="357" fill="#ddd" font-size="11" font-family="Segoe UI Symbol">▣</text>
+<text x="394" y="357" fill="#e6e6e6" font-size="11.5" font-family="Segoe UI" font-weight="700" letter-spacing="0.6">ADMIN API</text>
+<rect x="740" y="90" width="830" height="230" rx="14" fill="rgba(25,70,35,0.30)" stroke="#4f9a5a" stroke-width="2"/>
+<rect x="750" y="100" width="94.69999999999999" height="24" rx="5" fill="#202020" stroke="#8d8d8d"/>
+<text x="759" y="117" fill="#ddd" font-size="11" font-family="Segoe UI Symbol">▭</text>
+<text x="774" y="117" fill="#e6e6e6" font-size="11.5" font-family="Segoe UI" font-weight="700" letter-spacing="0.6">WEBSITE</text>
+<rect x="740" y="360" width="830" height="230" rx="14" fill="rgba(25,70,35,0.30)" stroke="#4f9a5a" stroke-width="2"/>
+<rect x="750" y="370" width="143.3" height="24" rx="5" fill="#202020" stroke="#8d8d8d"/>
+<text x="759" y="387" fill="#ddd" font-size="11" font-family="Segoe UI Symbol">▭</text>
+<text x="774" y="387" fill="#e6e6e6" font-size="11.5" font-family="Segoe UI" font-weight="700" letter-spacing="0.6">WHATSAPP (QR)</text>
+<rect x="740" y="630" width="830" height="230" rx="14" fill="rgba(25,70,35,0.30)" stroke="#4f9a5a" stroke-width="2"/>
+<rect x="750" y="640" width="110.89999999999999" height="24" rx="5" fill="#202020" stroke="#8d8d8d"/>
+<text x="759" y="657" fill="#ddd" font-size="11" font-family="Segoe UI Symbol">▭</text>
+<text x="774" y="657" fill="#e6e6e6" font-size="11.5" font-family="Segoe UI" font-weight="700" letter-spacing="0.6">MESSENGER</text>
+<path d="M184.0 470.0 C319.9 470.0 350.1 470.0 486.0 470.0" fill="none" stroke="#e8e8e8" stroke-opacity="0.85" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M534.0 470.0 C728.7 470.0 681.3 205.0 876.0 205.0" fill="none" stroke="#e8e8e8" stroke-opacity="0.85" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M924.0 205.0 C1118.4 205.0 1161.6 205.0 1356.0 205.0" fill="none" stroke="#e8e8e8" stroke-opacity="0.85" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M534.0 470.0 C687.9 470.0 722.1 475.0 876.0 475.0" fill="none" stroke="#e8e8e8" stroke-opacity="0.85" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M924.0 475.0 C1010.4 475.0 1029.6 475.0 1116.0 475.0" fill="none" stroke="#e8e8e8" stroke-opacity="0.85" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M1164.0 475.0 C1250.4 475.0 1269.6 475.0 1356.0 475.0" fill="none" stroke="#e8e8e8" stroke-opacity="0.85" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M534.0 470.0 C731.5 470.0 678.5 745.0 876.0 745.0" fill="none" stroke="#e8e8e8" stroke-opacity="0.85" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M924.0 745.0 C1010.4 745.0 1029.6 745.0 1116.0 745.0" fill="none" stroke="#e8e8e8" stroke-opacity="0.85" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M1164.0 745.0 C1250.4 745.0 1269.6 745.0 1356.0 745.0" fill="none" stroke="#e8e8e8" stroke-opacity="0.85" stroke-width="1.6" marker-end="url(#ah)"/>
+<rect x="326.9" y="460.0" width="16.3" height="19" rx="4" fill="#1c1c1c" stroke="#555"/>
+<text x="335.0" y="474.0" text-anchor="middle" fill="#dcdcdc" font-size="11" font-family="Segoe UI">1</text>
+<rect x="671.6" y="327.5" width="66.7" height="19" rx="4" fill="#1c1c1c" stroke="#555"/>
+<text x="705.0" y="341.5" text-anchor="middle" fill="#dcdcdc" font-size="11" font-family="Segoe UI">2 api_key</text>
+<rect x="1072.0" y="195.0" width="136.0" height="19" rx="4" fill="#1c1c1c" stroke="#555"/>
+<text x="1140.0" y="209.0" text-anchor="middle" fill="#dcdcdc" font-size="11" font-family="Segoe UI">paste before &lt;/body&gt;</text>
+<rect x="696.9" y="462.5" width="16.3" height="19" rx="4" fill="#1c1c1c" stroke="#555"/>
+<text x="705.0" y="476.5" text-anchor="middle" fill="#dcdcdc" font-size="11" font-family="Segoe UI">3</text>
+<rect x="696.9" y="597.5" width="16.3" height="19" rx="4" fill="#1c1c1c" stroke="#555"/>
+<text x="705.0" y="611.5" text-anchor="middle" fill="#dcdcdc" font-size="11" font-family="Segoe UI">4</text>
+<rect x="977.2" y="735.0" width="85.6" height="19" rx="4" fill="#1c1c1c" stroke="#555"/>
+<text x="1020.0" y="749.0" text-anchor="middle" fill="#dcdcdc" font-size="11" font-family="Segoe UI">code → token</text>
+<g transform="translate(160,470)"><circle cx="0" cy="-9" r="6" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><path d="M-13 15 C-13 3 13 3 13 15" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/></g>
+<text x="160" y="508.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">Operator</text>
+<text x="160" y="522.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">(admin key)</text>
+<g transform="translate(510,470)"><rect x="-22.0" y="-22.0" width="44" height="44" rx="6" fill="#E8851A"/><rect x="-11" y="-9" width="16" height="16" rx="2" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><rect x="-5" y="-14" width="16" height="16" rx="2" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/></g>
+<text x="510" y="508.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">POST /admin/companies</text>
+<text x="510" y="522.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">name + knowledge base</text>
+<g transform="translate(900,205)"><rect x="-22.0" y="-22.0" width="44" height="44" rx="6" fill="#2b2b2b"/><rect x="-14" y="-11" width="28" height="22" rx="2" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><line x1="-14" y1="-5" x2="14" y2="-5" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><circle cx="-10" cy="-8" r="0.8" fill="#fff"/></g>
+<text x="900" y="243.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">embed_snippet</text>
+<text x="900" y="257.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">&lt;script data-api-key&gt;</text>
+<g transform="translate(1380,205)"><rect x="-22.0" y="-22.0" width="44" height="44" rx="6" fill="#2b2b2b"/><rect x="-14" y="-11" width="28" height="22" rx="2" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><line x1="-14" y1="-5" x2="14" y2="-5" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><circle cx="-10" cy="-8" r="0.8" fill="#fff"/></g>
+<text x="1380" y="243.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">Chat bubble live</text>
+<text x="1380" y="257.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">on the business site</text>
+<g transform="translate(900,475)"><rect x="-22.0" y="-22.0" width="44" height="44" rx="6" fill="#0F9D8A"/><circle cx="0" cy="0" r="6" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><line x1="8.0" y1="0.0" x2="12.0" y2="0.0" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><line x1="5.7" y1="5.7" x2="8.5" y2="8.5" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><line x1="0.0" y1="8.0" x2="0.0" y2="12.0" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><line x1="-5.7" y1="5.7" x2="-8.5" y2="8.5" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><line x1="-8.0" y1="0.0" x2="-12.0" y2="0.0" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><line x1="-5.7" y1="-5.7" x2="-8.5" y2="-8.5" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><line x1="-0.0" y1="-8.0" x2="-0.0" y2="-12.0" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><line x1="5.7" y1="-5.7" x2="8.5" y2="-8.5" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/></g>
+<text x="900" y="513.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">connect-whatsapp</text>
+<text x="900" y="527.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">start session</text>
+<g transform="translate(1140,475)"><rect x="-10" y="-17" width="20" height="34" rx="4" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><line x1="-3" y1="12" x2="3" y2="12" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/></g>
+<text x="1140" y="513.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">Poll whatsapp-qr</text>
+<text x="1140" y="527.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">show QR</text>
+<g transform="translate(1380,475)"><rect x="-10" y="-17" width="20" height="34" rx="4" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><line x1="-3" y1="12" x2="3" y2="12" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/></g>
+<text x="1380" y="513.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">Owner scans</text>
+<text x="1380" y="527.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">number answers</text>
+<g transform="translate(900,745)"><rect x="-22.0" y="-22.0" width="44" height="44" rx="6" fill="#F38020"/><path d="M0 -13 L11 -8 L11 1 C11 8 5 12 0 14 C-5 12 -11 8 -11 1 L-11 -8 Z" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/></g>
+<text x="900" y="783.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">/messenger-oauth/start</text>
+<text x="900" y="797.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">Facebook Login</text>
+<g transform="translate(1140,745)"><path d="M-14 9 C-21 9 -21 -1 -14 -2 C-14 -10 -5 -13 0 -8 C3 -14 14 -12 13 -3 C20 -3 20 9 13 9 Z" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/></g>
+<text x="1140" y="783.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">Subscribe page</text>
+<text x="1140" y="797.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">save page token</text>
+<g transform="translate(1380,745)"><rect x="-10" y="-17" width="20" height="34" rx="4" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/><line x1="-3" y1="12" x2="3" y2="12" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/></g>
+<text x="1380" y="783.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">Page messages</text>
+<text x="1380" y="797.0" text-anchor="middle" fill="#ececec" font-size="12" font-family="Segoe UI">answered</text>
+<text x="380" y="660" transform="rotate(-2 380 660)" fill="#6fdc8c" font-size="17" font-family="Segoe Print, Comic Sans MS" font-weight="700">one key per company =</text>
+<text x="380" y="681" transform="rotate(-2 380 660)" fill="#6fdc8c" font-size="17" font-family="Segoe Print, Comic Sans MS" font-weight="700">data kept apart</text>
+<text x="60" y="900" transform="rotate(-1 60 900)" fill="#6fdc8c" font-size="16" font-family="Segoe Print, Comic Sans MS" font-weight="700">sessions saved on disk → reconnect after restart</text>
+<text x="1020" y="900" transform="rotate(-1 1020 900)" fill="#ff6b6b" font-size="16" font-family="Segoe Print, Comic Sans MS" font-weight="700">connects the first page found → let owner pick</text>
+</svg>

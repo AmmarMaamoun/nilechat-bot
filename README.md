@@ -1,151 +1,203 @@
 # NileChat
 
-**A multi-tenant AI customer service platform for Arabic-speaking businesses, powered by a dialect-specific LLM and deployable across web, WhatsApp, and Messenger from a single backend.**
+An AI customer-service bot for Egyptian businesses. It answers customers in Egyptian Arabic on the business's website, WhatsApp and Facebook Messenger, using that business's own FAQ, prices and policies.
+
+**Stack:** Python 3.11 · FastAPI · Nile-Chat-12B (Hugging Face Space) · SQLite · Node.js + whatsapp-web.js · Meta Graph API · Docker
+
+![Architecture](docs/diagrams/architecture.png)
 
 ---
 
-## Introduction
+## The problem
 
-Most chatbot platforms are built for English, or Modern Standard Arabic at best, and priced for enterprises. NileChat closes that gap: it gives an Arabic-speaking business a working, dialect-native AI support agent without hiring a developer.
+Small businesses in Egypt get most customer questions on WhatsApp and Facebook, in Egyptian dialect, and often after working hours. Most chatbot tools are built for English or Modern Standard Arabic, and connecting to the official WhatsApp API requires Meta business verification, which many small businesses don't have. So questions like "how much is the apartment?" or "do you have parking?" wait hours for a human reply.
 
-One short onboarding step gets a business an AI agent that knows their business and is reachable on their website, WhatsApp, and Facebook Page. Underneath, it's a genuinely multi-tenant SaaS: one backend, one schema, every business isolated by tenant — the system scales by adding rows, not servers.
+## The solution
 
-The project speaks to two audiences. For a **business owner**, it's a working Arabic-native support bot. For a **technical reviewer**, it's a compact but non-trivial system: real multi-tenancy, three separate messaging integrations, an LLM consumed through a non-standard streaming protocol, and the production-hygiene details that separate a prototype from something that could run a business.
+NileChat runs one backend that serves many businesses ("companies"). Each company gets an API key and stores its knowledge base: products, prices, opening hours, FAQ. A customer message from any channel goes through the same pipeline:
 
-## Architecture
+1. Find which company the message belongs to.
+2. Load that customer's recent conversation.
+3. Build a system prompt from the company's knowledge base.
+4. Ask the model, then save the reply and send it back.
 
-Follow a single message through the system: a customer types something on a website, WhatsApp, or Messenger, and the same backend resolves who they're talking to, what that business knows, and what to reply.
+The default model is **Nile-Chat-12B** (MBZUAI-Paris), which is trained for Egyptian Arabic. The system prompt tells it to answer only from the company's information, quote prices exactly, and say "I don't have information about that" instead of guessing.
 
-```
-                          ┌──────────────────────┐
-   Web Widget  ─────────▶ │                      │
-   (widget.js)            │                      │
-                          │   FastAPI Backend    │ ───▶  Nile-Chat-12B
-   WhatsApp Cloud API ───▶│      (main.py)       │       (HuggingFace Space,
-   (Meta webhook)         │                      │        Gradio event API)
-                          │  6 routers, 1 schema │
-   WhatsApp QR Service ──▶│                      │
-   (Node microservice)    │                      │ ───▶  PostgreSQL (Supabase)
-                          │                      │       + pgvector
-   Messenger ─────────────▶│                     │
-   (Meta webhook + OAuth)  └──────────────────────┘
-```
+For WhatsApp there are two paths: the **official Cloud API** webhook, and a **QR pairing** service that lets a business connect its existing number by scanning a code, with no Meta approval needed.
 
-Each channel is an isolated router mounted on the same FastAPI app, converging on one `nilechat.reply()` pipeline — conversation history, system prompt, model call, persistence. The channels are just different doors into the same room.
+## Message workflow
 
-### Component breakdown
+![Message workflow](docs/diagrams/workflow.png)
 
-Roughly the order a request passes through the codebase:
+1. A customer writes on the website widget, WhatsApp or Messenger.
+2. The channel router checks the request and finds the company:
+   - widget: by `api_key`
+   - Messenger: by Facebook `page_id`
+   - QR WhatsApp: by `company_id` from the Node service
+   - Meta webhooks: the signature is checked first
+3. The customer and an active conversation are found or created in SQLite.
+4. Recent history is loaded from an in-memory cache, or from the last 5 saved messages when the cache is empty.
+5. The system prompt is built from the company name and knowledge base.
+6. The model is called. For Nile-Chat-12B the backend submits a job to the Space's Gradio API and reads the result from its server-sent event stream.
+7. The question and answer are saved, and the memory keeps the last 10 turns.
+8. The reply goes back on the same channel.
 
-| Layer | Responsibility |
+## Onboarding a business
+
+![Onboarding](docs/diagrams/onboarding.png)
+
+| Channel | Steps |
 |---|---|
-| `main.py` | FastAPI app assembly, router mounting, static asset serving, optional ngrok tunnel bootstrap |
-| `nilechat.py` | Model client — conversation memory, per-tenant system prompt construction, response pipeline |
-| `db.py` | Async PostgreSQL access layer (connection pooling, tenant/user/conversation/message queries) |
-| `admin.py` | Tenant management API — create companies, update knowledge bases, issue embed snippets |
-| `webchat.py` | Public web-widget API, authenticated by per-tenant `api_key` |
-| `whatsapp.py` | WhatsApp Cloud API webhook — signature verification, message receipt, reply delivery with retry/backoff |
-| `whatsapp_qr.py` + `whatsapp-service/index.js` | Self-serve WhatsApp connection for tenants without Cloud API access (see below) |
-| `messenger.py` | Messenger webhook — per-page tenant resolution, signature verification |
-| `messenger_oauth.py` | Facebook Login flow so a business can connect its own Page in one click |
-| `schema.sql` | Full multi-tenant schema, including a `pgvector` column reserved for future semantic search |
+| Website | `POST /admin/companies` returns an `api_key` and a ready `<script>` embed snippet; paste it before `</body>` |
+| WhatsApp (QR) | `POST /admin/companies/{id}/connect-whatsapp`, poll `GET /admin/companies/{id}/whatsapp-qr`, scan with the business phone |
+| Messenger | Send the owner to `/messenger-oauth/start?api_key=...`; after Facebook Login the page is subscribed to the webhook and its token is saved |
 
-### Notable design decisions
+The admin dashboard at `/dashboard` wraps these calls.
 
-A few choices here weren't the default option, each answering a real constraint:
+## Key features
 
-**Dual WhatsApp integration.** Most SMBs can't get WhatsApp Cloud API access, which requires Meta Business verification. Alongside the official webhook (`whatsapp.py`), a Node.js microservice (`whatsapp-service/`, built on `whatsapp-web.js`) runs one Puppeteer session per tenant behind a QR pairing flow — a business connects its existing number, no API approval needed.
+- Multi-company backend: every company has its own API key, knowledge base and welcome message
+- Four entry points into one reply pipeline: website widget, WhatsApp QR, WhatsApp Cloud API, Messenger
+- Egyptian-Arabic system prompt that stays on the company's facts and prices
+- Conversation memory per customer and channel
+- Model can be swapped by configuration: Nile-Chat-12B by default, or any `/chat/completions` provider
+- Self-serve WhatsApp pairing by QR, with saved sessions that reconnect after a restart
+- One-click Messenger connection through Facebook Login
+- Ready-made demo client (real-estate agency "عقارات جميلة") with sample listings and a demo site at `/demo`
+- Single Docker image running both services, with data on one persistent volume
 
-**Non-standard model integration.** Nile-Chat-12B is served from a Gradio Space, not a completions endpoint. The client warms the Space, submits a job, and reads a server-sent-event stream for the result — implemented over async `httpx` so the request lifecycle isn't blocked while the model streams.
+## Engineering decisions
 
-**Self-serve Messenger onboarding.** `messenger_oauth.py` implements the full Facebook Login exchange — redirect, code exchange, page discovery, webhook subscription, token storage — so a business connects its own Page with one click instead of copy-pasting a token.
+**One pipeline, many channels.**
+Every router ends in `nilechat.reply()`, so prompt rules, memory and storage behave the same on every channel. Adding a channel means writing a router that finds the company and sends the reply. *Trade-off:* channel-specific features (images, buttons) aren't supported yet; the conversation is text only.
 
-**Webhook security.** Both WhatsApp and Messenger webhooks verify Meta's HMAC request signature before processing, and always return `200` on internal errors to avoid Meta's retry storms. WhatsApp sends carry their own retry/backoff on `429`.
+**A second WhatsApp path that needs no Meta approval.**
+`whatsapp-service/` runs one `whatsapp-web.js` client (headless Chromium) per company and pairs it by QR. Each login is saved under `WA_AUTH_DIR` and restored on startup. *Trade-off:* this uses WhatsApp Web, not the official API, so a dedicated business number is recommended, and every paired number gets automatic replies on all its one-to-one chats (group chats are skipped).
 
-**Pooler-aware persistence.** Supabase's transaction-mode pooler requires `statement_cache_size=0` on `asyncpg` — a detail that silently breaks otherwise-correct code if missed.
+**Calling a model that has no completions API.**
+Nile-Chat-12B is served as a Gradio Space. The client warms the Space on the first call, submits a job to `/gradio_api/call/chat`, and reads the last `data:` event from the stream using async `httpx`, so other requests aren't blocked while it waits. Temperature is set to 0.2 to keep answers close to the knowledge base.
 
-## Technology
+**Swappable model.**
+`LLM_PROVIDER=chat_completions` with `LLM_BASE_URL`, `LLM_MODEL` and `LLM_API_KEY` sends the same prompt and history to any OpenAI-compatible endpoint, with no code change.
 
-A small, deliberate stack — no heavy framework beyond what each piece above needs:
+**SQLite instead of a hosted database.**
+All data is in one SQLite file in WAL mode, so the web, WhatsApp and admin routes can read while another one writes. Blocking `sqlite3` calls run in a worker thread to keep FastAPI async. The schema is applied automatically on startup. *Trade-off:* this fits one server; several servers would need a shared database.
 
-- **Backend:** Python 3.11, FastAPI, Uvicorn
-- **AI Model:** Nile-Chat-12B (`MBZUAI-Paris/Nile-Chat-12B`) via HuggingFace Spaces
-- **Database:** PostgreSQL via Supabase, with the `pgvector` extension
-- **WhatsApp (self-serve path):** Node.js, `whatsapp-web.js`, Puppeteer
-- **Messenger / WhatsApp Cloud:** Meta Graph API v19.0
-- **Dev tunneling:** ngrok
+**Webhook safety.**
+WhatsApp (`X-Hub-Signature-256`, SHA-256) and Messenger (`X-Hub-Signature`, SHA-1) payloads are checked with HMAC against the app secret, and invalid signatures get `401`. Processing errors still return `200`, so Meta doesn't keep resending the same message. WhatsApp sends retry up to 3 times, with exponential backoff on `429`.
 
-## Dependencies
+**Access boundaries.**
+Admin and WhatsApp-pairing routes require the `x-admin-key` header. The Node service calls the backend with the same key. The public chat API is open to any website (CORS `*`) because the widget runs on clients' sites, but it only answers for a valid company `api_key`.
 
-Every dependency here maps to a component described above.
+## Project structure
 
-Python (`requirements.txt`):
-
-| Package | Purpose |
-|---|---|
-| `fastapi` | Web framework and routing |
-| `uvicorn[standard]` | ASGI server |
-| `httpx` | Async HTTP client — used for the model's SSE stream and all Graph API calls |
-| `asyncpg` | Async PostgreSQL driver |
-| `pgvector` | Vector type support for the `messages.embedding` column |
-| `pydantic` | Request/response validation |
-| `python-dotenv` | Environment variable loading |
-
-Node (`whatsapp-service/package.json`):
-
-| Package | Purpose |
-|---|---|
-| `whatsapp-web.js` | Unofficial WhatsApp Web client — drives the QR pairing session |
-| `express` | HTTP API for the microservice (`/connect`, `/qr`, `/status`, `/send`) |
-| `qrcode` | Renders the pairing QR as a base64 image for the dashboard |
-| `axios` | Forwards inbound WhatsApp messages to the Python backend |
-| `dotenv` | Shares the root `.env` with the Node process |
-
-## Usage
-
-What this looks like in practice — first for the operator, then for the customer.
-
-**As a platform operator**, provision a tenant through the admin API:
-
-```
-POST /admin/companies
-Header: x-admin-key: <ADMIN_API_KEY>
-Body:   { "name": "...", "knowledge_base": "...", "welcome_message": "..." }
+```text
+main.py               FastAPI app: mounts the 6 routers, serves widget/dashboard/demo, optional ngrok tunnel
+nilechat.py           Reply pipeline: memory, system prompt, Nile-Chat Space client, chat-completions client
+db.py                 SQLite access layer (async wrappers, schema bootstrap)
+schema.sql            companies, users, conversations, messages
+admin.py              Company management API + embed snippet
+webchat.py            Public widget API (/chat/message, /chat/welcome)
+whatsapp.py           WhatsApp Cloud API webhook + sender with retry
+whatsapp_qr.py        Bridge to the Node QR service + admin pairing routes
+messenger.py          Messenger webhook, finds the company by page ID
+messenger_oauth.py    Facebook Login flow to connect a business page
+seed_demo.py          Creates/updates the real-estate demo client
+whatsapp-service/     Node.js service: one whatsapp-web.js session per company
+static/               widget.js, admin dashboard, demo site
+docs/                 Setup guides for WhatsApp and Messenger, diagrams
+Dockerfile, start.sh  One image running both services
 ```
 
-The response includes a generated `api_key` and a ready-to-paste widget snippet. From there:
+## API
 
-- **Web:** drop the returned `<script>` tag before `</body>` on the business's site.
-- **WhatsApp:** call `POST /admin/companies/{id}/connect-whatsapp`, then poll `GET /admin/companies/{id}/whatsapp-qr` and scan the returned code.
-- **Messenger:** send the business to `GET /messenger-oauth/start?api_key=...` to connect their Page via Facebook Login.
+| Method | Path | Auth | Purpose |
+|---|---|---|---|
+| `GET` | `/` | none | Health check |
+| `POST` | `/chat/message` | company `api_key` in body | Widget message → bot reply |
+| `GET` | `/chat/welcome` | `api_key` query | Company name and welcome message |
+| `GET`, `POST` | `/admin/companies` | `x-admin-key` | List / create companies |
+| `GET` | `/admin/companies/{id}` | `x-admin-key` | Company details + embed snippet |
+| `PUT` | `/admin/companies/{id}/knowledge` | `x-admin-key` | Update knowledge base / welcome message |
+| `POST` | `/admin/companies/{id}/connect-whatsapp` | `x-admin-key` | Start QR pairing |
+| `GET` | `/admin/companies/{id}/whatsapp-qr` | `x-admin-key` | Get the QR image or status |
+| `GET` | `/admin/companies/{id}/whatsapp-status` | `x-admin-key` | Pairing status |
+| `POST` | `/admin/companies/{id}/disconnect-whatsapp` | `x-admin-key` | Disconnect a number |
+| `GET`, `POST` | `/webhook/whatsapp` | Meta verify token / signature | Cloud API webhook |
+| `GET`, `POST` | `/webhook/messenger` | Meta verify token / signature | Messenger webhook |
+| `POST` | `/webhook/whatsapp-qr` | `x-admin-key` | Messages from the Node service |
+| `GET` | `/messenger-oauth/start`, `/messenger-oauth/callback` | company `api_key` | Facebook Login flow |
+| `GET` | `/widget.js`, `/dashboard`, `/demo` | none | Static assets and demo |
 
-**As an end customer**, none of that setup is visible — just a chat bubble, or a normal WhatsApp or Messenger conversation. Tenant, model, and memory are resolved transparently, so the same question asked a day apart still gets a consistent, grounded reply.
+## Data model
 
-Full endpoint reference lives in-code in each router.
+```text
+companies ──< conversations >── users
+                  │
+                  └──< messages (role: user | bot)
+```
 
-## Running locally
+- **companies:** name, `api_key`, knowledge base, welcome message, Messenger page ID and token
+- **users:** a customer, identified by phone number or by a channel-prefixed ID (`web_<session>`, `messenger_<psid>`, `waqr_<phone>`)
+- **conversations:** one active conversation per user, channel and company
+- **messages:** the question and answer history
+
+## Getting started
+
+### Prerequisites
+
+- Python 3.11
+- Node.js (for the WhatsApp QR service) and Google Chrome or Chromium
+- A Hugging Face access token (`HF_API_KEY`) for the Nile-Chat Space
+
+### Run locally
 
 ```bash
+git clone https://github.com/AmmarMaamoun/nilechat-bot.git
+cd nilechat-bot
 pip install -r requirements.txt
 cd whatsapp-service && npm install && cd ..
-cp .env.example .env   # fill in HF, Supabase, Meta, and ngrok credentials
+cp .env.example .env          # then fill in the values you need
+python seed_demo.py           # optional: create the demo client
+python main.py                # backend on http://localhost:8000
+cd whatsapp-service && node index.js   # QR service on port 3001 (second terminal)
 ```
 
-Provider-specific setup (Supabase project + pgvector, WhatsApp Cloud API/WABA, Meta App + Messenger) is documented step by step in [`docs/`](docs/). Apply `schema.sql` once via the Supabase SQL Editor, then start both services:
+Open http://localhost:8000/demo for the demo site with the widget, or http://localhost:8000/dashboard for the admin dashboard.
+
+Meta webhooks need a public HTTPS URL. If `NGROK_AUTHTOKEN` is set and `pyngrok` is installed (`pip install pyngrok`), `python main.py` opens a tunnel and prints the webhook URLs to register with Meta. Step-by-step channel setup is in [docs/whatsapp_setup.md](docs/whatsapp_setup.md) and [docs/messenger_setup.md](docs/messenger_setup.md).
+
+### Run with Docker
 
 ```bash
-python main.py                              # FastAPI backend, port 8000
-cd whatsapp-service && node index.js         # WhatsApp QR microservice, port 3001
+docker build -t nilechat .
+docker run -p 8000:8000 --env-file .env -v nilechat-data:/data nilechat
 ```
 
-The dashboard is served at `/dashboard`; if `NGROK_AUTHTOKEN` is set, `main.py` opens a public tunnel automatically on boot and logs the webhook URLs to register with Meta.
+`start.sh` creates the demo client, starts the WhatsApp service in the background and runs the API. The `/data` volume holds the SQLite database and every company's WhatsApp login.
 
-## Why this project stands out
+### Configuration
 
-- **Real multi-tenancy, not a single-bot demo.** One schema, one deployment, unlimited businesses — isolation enforced at the data layer, not by separate instances.
-- **Solves a real adoption barrier.** The dual WhatsApp path exists because most small businesses can't clear Meta's Business verification — a product decision, not just a technical one.
-- **Integrates a model with no conventional API.** Turning a Gradio Space's queue/event-stream protocol into a clean async function is a non-trivial integration problem.
-- **Production-conscious throughout:** signature verification, retry-with-backoff, a documented pooler fix, and no live credential ever committed to the repo.
-- **Three integration surfaces, one backend** — REST/OAuth API, official webhook, and browser-automation client — a broader systems exercise than any single channel alone.
+The main variables (full list with comments in [`.env.example`](.env.example)):
 
-In short: a working answer to an underserved market, built with multi-tenant depth that scales past a single demo.
+| Variable | Purpose |
+|---|---|
+| `HF_API_KEY` | Hugging Face token for the Nile-Chat Space |
+| `LLM_PROVIDER`, `LLM_BASE_URL`, `LLM_MODEL`, `LLM_API_KEY` | Optional: use a `/chat/completions` provider instead |
+| `ADMIN_API_KEY` | Protects admin routes and the Node → backend bridge |
+| `BASE_URL` | Public URL used in embed snippets and the OAuth redirect |
+| `DB_PATH` | SQLite file location (default `nilechat.db`) |
+| `WHATSAPP_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_VERIFY_TOKEN`, `WHATSAPP_APP_SECRET` | WhatsApp Cloud API |
+| `MESSENGER_VERIFY_TOKEN`, `MESSENGER_APP_SECRET`, `FB_APP_ID`, `MESSENGER_PAGE_ACCESS_TOKEN` | Messenger and Facebook Login |
+| `WA_SERVICE_URL`, `WA_AUTH_DIR`, `CHROME_PATH` | WhatsApp QR service location, session folder and browser path |
+| `NGROK_AUTHTOKEN` | Optional dev tunnel |
+
+## Next steps
+
+- **Ground answers in retrieval.** Nile-Chat can still guess when the knowledge base doesn't cover a question. The plan is to embed each company's knowledge base and pass only the most relevant passages to the model, and to keep knowledge bases detailed until then.
+- **Link the Cloud API webhook to a company.** WhatsApp Cloud API messages are answered without a company knowledge base today; mapping `phone_number_id` to a company would give them the same grounded answers as the other channels.
+- **Automated tests and CI.** Add pytest coverage for the reply pipeline, routers and database layer using a fake model, and run it with linting on every push.
+- **Tighter webhook and OAuth security.** Reject webhooks when the app secret is not configured instead of only logging a warning, use a signed one-time `state` in the Messenger OAuth flow, and let the owner choose which page to connect when they manage several.
+- **Protect stored tokens.** Encrypt Messenger page tokens at rest and add rate limiting to the public `/chat/message` endpoint.
+- **Hosting.** Deploy the Docker image to a server with a persistent volume and an HTTPS domain, replacing the ngrok tunnel used in development.
+- **Per-business dashboard login.** Replace the single shared admin key with accounts so each business can edit only its own knowledge base.
